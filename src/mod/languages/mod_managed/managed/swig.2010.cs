@@ -2747,8 +2747,8 @@ public class freeswitch {
     freeswitchPINVOKE.switch_time_set_monotonic((int)enable);
   }
 
-  public static void switch_time_set_timerfd(switch_bool_t enable) {
-    freeswitchPINVOKE.switch_time_set_timerfd((int)enable);
+  public static void switch_time_set_timerfd(int enable) {
+    freeswitchPINVOKE.switch_time_set_timerfd(enable);
   }
 
   public static void switch_time_set_nanosleep(switch_bool_t enable) {
@@ -3167,41 +3167,6 @@ public class freeswitch {
 
   public static void switch_core_session_debug_pool(switch_stream_handle stream) {
     freeswitchPINVOKE.switch_core_session_debug_pool(switch_stream_handle.getCPtr(stream));
-  }
-
-  public static string switch_version_major() {
-    string ret = freeswitchPINVOKE.switch_version_major();
-    return ret;
-  }
-
-  public static string switch_version_minor() {
-    string ret = freeswitchPINVOKE.switch_version_minor();
-    return ret;
-  }
-
-  public static string switch_version_micro() {
-    string ret = freeswitchPINVOKE.switch_version_micro();
-    return ret;
-  }
-
-  public static string switch_version_revision() {
-    string ret = freeswitchPINVOKE.switch_version_revision();
-    return ret;
-  }
-
-  public static string switch_version_revision_human() {
-    string ret = freeswitchPINVOKE.switch_version_revision_human();
-    return ret;
-  }
-
-  public static string switch_version_full() {
-    string ret = freeswitchPINVOKE.switch_version_full();
-    return ret;
-  }
-
-  public static string switch_version_full_human() {
-    string ret = freeswitchPINVOKE.switch_version_full_human();
-    return ret;
   }
 
   public static switch_status_t switch_loadable_module_init(switch_bool_t autoload) {
@@ -11062,6 +11027,7 @@ class freeswitchPINVOKE {
   [DllImport("mod_managed", EntryPoint="CSharp_switch_core_session_debug_pool")]
   public static extern void switch_core_session_debug_pool(HandleRef jarg1);
 
+<<<<<<< HEAD
   [DllImport("mod_managed", EntryPoint="CSharp_switch_version_major")]
   public static extern string switch_version_major();
 
@@ -11083,6 +11049,8 @@ class freeswitchPINVOKE {
   [DllImport("mod_managed", EntryPoint="CSharp_switch_version_full_human")]
   public static extern string switch_version_full_human();
 
+=======
+>>>>>>> vs2010 reswig
   [DllImport("mod_managed", EntryPoint="CSharp_switch_loadable_module_interface_module_name_set")]
   public static extern void switch_loadable_module_interface_module_name_set(HandleRef jarg1, string jarg2);
 
@@ -27346,11 +27314,15 @@ public enum switch_channel_flag_t {
   CF_VIDEO_ECHO,
   CF_SLA_INTERCEPT,
   CF_VIDEO_BREAK,
+<<<<<<< HEAD
   CF_AUDIO_PAUSE,
   CF_VIDEO_PAUSE,
   CF_BYPASS_MEDIA_AFTER_HOLD,
   CF_HANGUP_HELD,
   CF_CONFERENCE_RESET_MEDIA,
+=======
+  CF_MEDIA_PAUSE,
+>>>>>>> vs2010 reswig
   CF_FLAG_MAX
 }
 
@@ -35958,7 +35930,10 @@ public enum switch_rtp_flag_t {
   SWITCH_RTP_FLAG_PAUSE,
   SWITCH_RTP_FLAG_FIR,
   SWITCH_RTP_FLAG_PLI,
+<<<<<<< HEAD
   SWITCH_RTP_FLAG_RESET,
+=======
+>>>>>>> vs2010 reswig
   SWITCH_RTP_FLAG_INVALID
 }
 
