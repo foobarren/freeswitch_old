@@ -864,11 +864,11 @@ switch_status_t skinny_session_unhold_line(switch_core_session_t *session, liste
 	send_open_receive_channel(listener,
 		tech_pvt->call_id, /* uint32_t conference_id, */
 		tech_pvt->call_id, /* uint32_t pass_thru_party_id, */
-		SKINNY_PTIME, /* uint32_t ms_per_packet, */
+		20, /* uint32_t ms_per_packet, */
 		SKINNY_CODEC_ULAW_64K, /* uint32_t payload_capacity, */
 		0, /* uint32_t echo_cancel_type, */
 		0, /* uint32_t g723_bitrate, */
-		tech_pvt->call_id, /* uint32_t conference_id2, */
+		0, /* uint32_t conference_id2, */
 		0 /* uint32_t reserved[10] */
 		);
 
