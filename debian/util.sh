@@ -481,4 +481,3 @@ case "$cmd" in
   create-orig) create_orig "$@" ;;
   *) usage ;;
 esac
-

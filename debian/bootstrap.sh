@@ -1022,7 +1022,7 @@ print_edit_warning () {
 }
 
 gencontrol_per_mod () {
-  print_mod_control "$module_name" "$description" "$long_description" >> control  
+  print_mod_control "$module_name" "$description" "$long_description" >> control
 }
 
 gencontrol_per_cat () {
