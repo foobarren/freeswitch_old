@@ -1413,7 +1413,7 @@ LOGGERS_MODULES="loggers/mod_console loggers/mod_logfile loggers/mod_syslog"
 #						Phrase engine language modules
 #
 ######################################################################################################################
-SAY_MODULES="say/mod_say_de say/mod_say_en say/mod_say_fr say/mod_say_he say/mod_say_ru"
+SAY_MODULES="say/mod_say_de say/mod_say_en say/mod_say_fr say/mod_say_he say/mod_say_ru say/mod_say_sv"
 
 ######################################################################################################################
 #
@@ -2366,6 +2366,16 @@ fi
 %config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/lang/pt/dir/*.xml
 %{MODINSTDIR}/mod_say_en.so*
 
+%files lang-sv
+%defattr(-, freeswitch, daemon)
+%dir %attr(0750, freeswitch, daemon) %{sysconfdir}/lang/sv
+%dir %attr(0750, freeswitch, daemon) %{sysconfdir}/lang/sv/demo
+%dir %attr(0750, freeswitch, daemon) %{sysconfdir}/lang/sv/vm
+%config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/lang/sv/*.xml
+%config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/lang/sv/demo/*.xml
+%config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/lang/sv/vm/*.xml
+%{MODINSTDIR}/mod_say_sv.so*
+
 ######################################################################################################################
 #
 #					Timer Modules
@@ -2402,14 +2412,13 @@ fi
 #
 ######################################################################################################################
 %changelog
-<<<<<<< HEAD
-=======
+* Sun Feb 02 2014 - jakob@mress.se
+- add support for building Swedish say language module
 * Mon Jan 13 2014 - peter@olssononline.se
 - Add mod_v8
 * Mon Dec 09 2013 - crienzo@grasshopper.com
 - Add mod_ssml, mod_rayo
 - Fix build on master
->>>>>>> Initial commit of mod_v8
 * Thu Jun 28 2013 - krice@freeswitch.org
 - Add module for VP8
 * Thu Jun 19 2013 - krice@freeswitch.org
