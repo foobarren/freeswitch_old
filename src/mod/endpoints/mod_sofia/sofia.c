@@ -1499,9 +1499,14 @@ static void our_sofia_event_callback(nua_event_t event,
 	case nua_r_authenticate:
 
 		if (status >= 500) {
-			if (sofia_private && sofia_private->gateway) {
-				nua_handle_destroy(sofia_private->gateway->nh);
-				sofia_private->gateway->nh = NULL;
+			if (sofia_private && !zstr(sofia_private->gateway_name)) {
+				sofia_gateway_t *gateway = NULL;
+
+				if ((gateway = sofia_reg_find_gateway(sofia_private->gateway_name))) {
+					gateway->state = REG_STATE_FAILED;
+					gateway->failure_status = status;
+					sofia_reg_release_gateway(gateway);
+				}
 			} else {
 				nua_handle_destroy(nh);
 			}
