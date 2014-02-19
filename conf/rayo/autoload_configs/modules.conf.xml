@@ -30,7 +30,6 @@
     <!-- Codec Interfaces -->
     <load module="mod_spandsp"/>
     <load module="mod_celt"/>
-    <load module="mod_speex"/>
     <load module="mod_opus"/>
     <load module="mod_ilbc"/>
 
