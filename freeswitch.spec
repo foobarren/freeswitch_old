@@ -1627,11 +1627,11 @@ fi
 %dir %attr(0750, freeswitch, daemon) %{sysconfdir}
 %dir %attr(0750, freeswitch, daemon) %{LOCALSTATEDIR}
 %dir %attr(0750, freeswitch, daemon) %{DBDIR}
-%dir %attr(0750, freeswitch, daemon) %{GRAMMARDIR}
-%dir %attr(0750, freeswitch, daemon) %{HTDOCSDIR}
+%dir %attr(0755, -, -) %{GRAMMARDIR}
+%dir %attr(0755, -, -) %{HTDOCSDIR}
 %dir %attr(0750, freeswitch, daemon) %{logfiledir}
 %dir %attr(0750, freeswitch, daemon) %{runtimedir}
-%dir %attr(0750, freeswitch, daemon) %{SCRIPTDIR}
+%dir %attr(0755, -, -) %{SCRIPTDIR}
 #
 #################################### Config Directory Structure #######################################################
 #
@@ -1652,19 +1652,15 @@ fi
 #
 #################################### Grammar Directory Structure #####################################################
 #
-%dir %attr(0750, freeswitch, daemon) %{GRAMMARDIR}/model
-%dir %attr(0750, freeswitch, daemon) %{GRAMMARDIR}/model/communicator
-%ifos linux
-%config(noreplace) %attr(0644, freeswitch, daemon) /etc/monit.d/freeswitch.monitrc
-%endif
-
+%dir %attr(0755, -, -) %{GRAMMARDIR}/model
+%dir %attr(0755, -, -) %{GRAMMARDIR}/model/communicator
 
 ######################################################################################################################
 #
-#						Other Fíles
+#						Other Files
 #
 ######################################################################################################################
-%config(noreplace) %attr(0640, freeswitch, daemon) %{HTDOCSDIR}/*
+%config(noreplace) %attr(0644,-,-) %{HTDOCSDIR}/*
 %ifos linux
 /etc/rc.d/init.d/freeswitch
 /etc/sysconfig/freeswitch
@@ -1674,7 +1670,9 @@ fi
 %endif
 %ifos linux
 %dir %attr(0750,-,-) /etc/monit.d
+%config(noreplace) %attr(0644,-,-) /etc/monit.d/freeswitch.monitrc
 %endif
+
 ######################################################################################################################
 #
 #						Binaries
@@ -1827,8 +1825,8 @@ fi
 ######################################################################################################################
 #						Grammar Files
 ######################################################################################################################
-%config(noreplace) %attr(0640, freeswitch, daemon) %{GRAMMARDIR}/default.dic
-%config(noreplace) %attr(0640, freeswitch, daemon) %{GRAMMARDIR}/model/communicator/*
+%config(noreplace) %attr(0644, -, -) %{GRAMMARDIR}/default.dic
+%config(noreplace) %attr(0644, -, -) %{GRAMMARDIR}/model/communicator/*
 
 ### END OF config-vanilla
 
@@ -1949,7 +1947,7 @@ fi
 
 ######################################################################################################################
 #
-#						ASR RRS Packages
+#						ASR TTS Packages
 #
 ######################################################################################################################
 %files asrtts-flite
@@ -2032,7 +2030,7 @@ fi
 ######################################################################################################################
 
 #%files directory-ldap
-#%{MODINSTDIR}/mod_theora.so*
+#%{MODINSTDIR}/mod_ldap.so*
 
 ######################################################################################################################
 #
