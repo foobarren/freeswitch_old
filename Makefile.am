@@ -777,6 +777,7 @@ eclean: clean
 	rm -f *.tar *.tgz *.gz 
 
 megaclean: eclean modclean
+	rm -f `find ./libs -name \*.o`
 	rm -f `find ./libs -name \*.la`
 
 libclean:
