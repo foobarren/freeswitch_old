@@ -26933,11 +26933,9 @@ public enum switch_channel_flag_t {
   CF_VIDEO_ECHO,
   CF_SLA_INTERCEPT,
   CF_VIDEO_BREAK,
-<<<<<<< HEAD
-=======
-  CF_MEDIA_PAUSE,
+  CF_AUDIO_PAUSE,
+  CF_VIDEO_PAUSE,
   CF_BYPASS_MEDIA_AFTER_HOLD,
->>>>>>> FS-6213 --resolve
   CF_FLAG_MAX
 }
 
