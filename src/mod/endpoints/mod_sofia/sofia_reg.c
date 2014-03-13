@@ -695,6 +695,7 @@ int sofia_reg_del_callback(void *pArg, int argc, char **argv, char **columnNames
 			switch_event_add_header_string(s_event, SWITCH_STACK_BOTTOM, "contact", argv[3]);
 			switch_event_add_header_string(s_event, SWITCH_STACK_BOTTOM, "expires", argv[6]);
 			switch_event_add_header_string(s_event, SWITCH_STACK_BOTTOM, "user-agent", argv[7]);
+			switch_event_add_header_string(s_event, SWITCH_STACK_BOTTOM, "realm", argv[14]);
 			sofia_event_fire(profile, &s_event);
 		}
 
@@ -748,7 +749,7 @@ void sofia_reg_expire_call_id(sofia_profile_t *profile, const char *call_id, int
 
 	sql = switch_mprintf("select call_id,sip_user,sip_host,contact,status,rpid,expires"
 						 ",user_agent,server_user,server_host,profile_name,network_ip,network_port"
-						 ",%d from sip_registrations where call_id='%q' %s", reboot, call_id, sqlextra);
+						 ",%d,sip_realm from sip_registrations where call_id='%q' %s", reboot, call_id, sqlextra);
 
 
 	sofia_glue_execute_sql_callback(profile, profile->dbh_mutex, sql, sofia_reg_del_callback, profile);
@@ -770,10 +771,10 @@ void sofia_reg_check_expire(sofia_profile_t *profile, time_t now, int reboot)
 	if (now) {
 		sql = switch_mprintf("select call_id,sip_user,sip_host,contact,status,rpid,expires"
 						",user_agent,server_user,server_host,profile_name,network_ip, network_port"
-						",%d from sip_registrations where expires > 0 and expires <= %ld", reboot, (long) now);
+						",%d,sip_realm from sip_registrations where expires > 0 and expires <= %ld", reboot, (long) now);
 	} else {
 		sql = switch_mprintf("select call_id,sip_user,sip_host,contact,status,rpid,expires"
-						",user_agent,server_user,server_host,profile_name,network_ip, network_port" ",%d from sip_registrations where expires > 0", reboot);
+						",user_agent,server_user,server_host,profile_name,network_ip, network_port" ",%d,sip_realm from sip_registrations where expires > 0", reboot);
 	}
 
 	sofia_glue_execute_sql_callback(profile, profile->dbh_mutex, sql, sofia_reg_del_callback, profile);
@@ -921,7 +922,7 @@ void sofia_reg_check_sync(sofia_profile_t *profile)
 	char *sql;
 
 	sql = switch_mprintf("select call_id,sip_user,sip_host,contact,status,rpid,expires"
-					",user_agent,server_user,server_host,profile_name,network_ip,network_port" 
+					",user_agent,server_user,server_host,profile_name,network_ip,network_port,0,sip_realm"
 					" from sip_registrations where expires > 0");
 
 
