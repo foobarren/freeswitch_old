@@ -3,7 +3,7 @@
 # spec file for package freeswitch
 #
 # includes module(s): freeswitch-devel freeswitch-codec-passthru-amr freeswitch-codec-passthru-amrwb freeswitch-codec-passthru-g729 
-#                     freeswitch-codec-passthru-g7231 freeswitch-lua freeswitch-perl freeswitch-python freeswitch-spidermonkey freeswitch-v8
+#                     freeswitch-codec-passthru-g7231 freeswitch-lua freeswitch-perl freeswitch-python freeswitch-v8
 #                     freeswitch-lan-de freeswitch-lang-en freeswitch-lang-fr freeswitch-lang-hu freeswitch-lang-ru freeswitch-freetdm
 #		      and others
 #
@@ -150,7 +150,11 @@ BuildRequires: gcc-c++
 BuildRequires: gnutls-devel
 BuildRequires: libtool >= 1.5.17
 BuildRequires: ncurses-devel
-BuildRequires: openssl-devel
+BuildRequires: openssl-devel >= 1.0.1e
+BuildRequires: pcre-devel 
+BuildRequires: speex-devel 
+BuildRequires: sqlite-devel
+BuildRequires: libedit-devel
 BuildRequires: perl
 %if 0%{?fedora_version} >= 8 || 0%{?rhel} >= 6
 BuildRequires: perl-ExtUtils-Embed
@@ -183,7 +187,11 @@ Requires: libogg
 Requires: libvorbis
 Requires: curl
 Requires: ncurses
-Requires: openssl
+Requires: pcre
+Requires: speex
+Requires: sqlite
+Requires: libedit
+Requires: openssl >= 1.0.1e
 Requires: unixODBC
 Requires: libjpeg
 #Requires: openldap
@@ -1092,13 +1100,6 @@ Requires:	python
 
 %description    python
 
-%package spidermonkey
-Summary:	JavaScript support for the FreeSWITCH open source telephony platform
-Group:		System/Libraries
-Requires:	%{name} = %{version}-%{release}
-
-%description spidermonkey
-
 %package v8
 Summary:	JavaScript support for the FreeSWITCH open source telephony platform, using Google V8 JavaScript engine
 Group:		System/Libraries
@@ -1428,7 +1429,7 @@ FORMATS_MODULES+=" formats/mod_ssml"
 #						Embedded Languages
 #
 ######################################################################################################################
-LANGUAGES_MODULES="languages/mod_lua languages/mod_perl languages/mod_python languages/mod_spidermonkey "
+LANGUAGES_MODULES="languages/mod_lua languages/mod_perl languages/mod_python "
 #LANGUAGES_MODULES+="languages/mod_v8"
 
 ######################################################################################################################
@@ -2209,15 +2210,6 @@ fi
 %dir %attr(0750, freeswitch, daemon) %{sysconfdir}/autoload_configs
 %config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/autoload_configs/python.conf.xml
 
-%files spidermonkey
-%{MODINSTDIR}/mod_spidermonkey*.so*
-%{LIBDIR}/libjs.so*
-%{LIBDIR}/libnspr4.so
-%{LIBDIR}/libplds4.so
-%{LIBDIR}/libplc4.so
-%dir %attr(0750, freeswitch, daemon) %{sysconfdir}/autoload_configs
-%config(noreplace) %attr(0640, freeswitch, daemon) %{sysconfdir}/autoload_configs/spidermonkey.conf.xml
-
 %files v8
 #%{MODINSTDIR}/mod_v8*.so*
 #%{LIBDIR}/libv8.so
@@ -2347,6 +2339,16 @@ fi
 #
 ######################################################################################################################
 %changelog
+* Fri Jun 02 2014 - krice@freeswitch.org
+- remove mod_spidermoney as its been deprecated
+* Fri Feb 21 2014 - crienzo@grasshopper.com
+- change file owner to root
+* Wed Feb 19 2014 - crienzo@grasshopper.com
+- remove mod_speex
+* Sun Feb 02 2014 - jakob@mress.se
+- add support for building Swedish say language module
+* Mon Jan 13 2014 - peter@olssononline.se
+- Add mod_v8
 * Mon Dec 09 2013 - crienzo@grasshopper.com
 - Add mod_ssml, mod_rayo
 - Fix build on master
