@@ -68,10 +68,7 @@ freeswitch-init
 freeswitch-sysvinit
 freeswitch-systemd
 freeswitch-lang
-freeswitch-music
-freeswitch-sounds
-freeswitch-sounds-en
-freeswitch-sounds-en-us
+freeswitch-timezones
 )
 
 err () {
@@ -364,8 +361,14 @@ Recommends:
  freeswitch-mod-commands (= \${binary:Version}),
  freeswitch-init (= \${binary:Version}),
  freeswitch-lang (= \${binary:Version}),
+<<<<<<< HEAD
  freeswitch-music (= \${binary:Version}),
  freeswitch-sounds (= \${binary:Version})
+=======
+ freeswitch-timezones (= \${binary:Version}),
+ freeswitch-music,
+ freeswitch-sounds
+>>>>>>> Create freeswitch-timezones debian package
 Suggests:
 Description: Cross-Platform Scalable Multi-Protocol Soft Switch
  $(debian_wrap "${fs_description}")
@@ -397,6 +400,7 @@ Depends: \${misc:Depends}, freeswitch (= \${binary:Version}),
 Recommends:
  freeswitch-init (= \${binary:Version}),
  freeswitch-lang (= \${binary:Version}),
+ freeswitch-timezones (= \${binary:Version}),
  freeswitch-meta-codecs (= \${binary:Version}),
  freeswitch-music (= \${binary:Version}),
  freeswitch-sounds (= \${binary:Version})
@@ -452,8 +456,14 @@ Depends: \${misc:Depends}, freeswitch (= \${binary:Version}),
 Recommends:
  freeswitch-init (= \${binary:Version}),
  freeswitch-lang (= \${binary:Version}),
+<<<<<<< HEAD
  freeswitch-music (= \${binary:Version}),
  freeswitch-sounds (= \${binary:Version}),
+=======
+ freeswitch-timezones (= \${binary:Version}),
+ freeswitch-music,
+ freeswitch-sounds,
+>>>>>>> Create freeswitch-timezones debian package
  freeswitch-conf-vanilla (= \${binary:Version}),
 Description: Cross-Platform Scalable Multi-Protocol Soft Switch
  $(debian_wrap "${fs_description}")
@@ -467,6 +477,7 @@ Depends: \${misc:Depends}, freeswitch (= \${binary:Version}),
 Recommends:
  freeswitch-init (= \${binary:Version}),
  freeswitch-lang (= \${binary:Version}),
+ freeswitch-timezones (= \${binary:Version}),
  freeswitch-meta-codecs (= \${binary:Version}),
  freeswitch-music (= \${binary:Version}),
  freeswitch-sounds (= \${binary:Version}),
@@ -550,6 +561,7 @@ Depends: \${misc:Depends}, freeswitch (= \${binary:Version}),
 Recommends:
  freeswitch-init (= \${binary:Version}),
  freeswitch-lang (= \${binary:Version}),
+ freeswitch-timezones (= \${binary:Version}),
  freeswitch-meta-codecs (= \${binary:Version}),
  freeswitch-meta-conf (= \${binary:Version}),
  freeswitch-meta-lang (= \${binary:Version}),
@@ -836,6 +848,7 @@ Description: Language files for FreeSWITCH
  This is a metapackage which depends on the default language packages
  for FreeSWITCH.
 
+<<<<<<< HEAD
 ## sounds
 
 Package: freeswitch-music
@@ -877,6 +890,17 @@ Description: US English sounds for FreeSWITCH
  .
  This is a metapackage which depends on the default US/English sound
  packages for FreeSWITCH.
+=======
+## timezones
+
+Package: freeswitch-timezones
+Architecture: all
+Depends: \${misc:Depends}
+Description: Timezone files for FreeSWITCH
+ $(debian_wrap "${fs_description}")
+ .
+ $(debian_wrap "This package includes the timezone files for FreeSWITCH.")
+>>>>>>> Create freeswitch-timezones debian package
 
 EOF
 }
