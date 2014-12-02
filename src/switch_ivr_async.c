@@ -1044,23 +1044,9 @@ struct record_helper {
 	switch_bool_t hangup_on_error;
 	switch_codec_implementation_t read_impl;
 	switch_bool_t speech_detected;
-	switch_buffer_t *thread_buffer;
-	switch_thread_t *thread;
-	switch_mutex_t *buffer_mutex;
-	int thread_ready;
 	const char *completion_cause;
 };
 
-/**
- * Set the recording completion cause. The cause can only be set once, to minimize the logic in the record_callback.
- * [The completion_cause strings are essentially those of an MRCP Recorder resource.]
- */
-static void set_completion_cause(struct record_helper *rh, const char *completion_cause)
-{
-	if (!rh->completion_cause) {
-		rh->completion_cause = completion_cause;
-	}
-}
 
 static switch_bool_t is_silence_frame(switch_frame_t *frame, int silence_threshold, switch_codec_implementation_t *codec_impl)
 {
@@ -1088,6 +1074,7 @@ static switch_bool_t is_silence_frame(switch_frame_t *frame, int silence_thresho
 	return is_silence;
 }
 
+<<<<<<< HEAD
 static void send_record_stop_event(switch_channel_t *channel, switch_codec_implementation_t *read_impl, struct record_helper *rh)
 {
 	switch_event_t *event;
@@ -1113,6 +1100,8 @@ static void send_record_stop_event(switch_channel_t *channel, switch_codec_imple
 		switch_event_fire(&event);
 	}
 }
+=======
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 
 static void *SWITCH_THREAD_FUNC recording_thread(switch_thread_t *thread, void *obj)
 {
@@ -1176,6 +1165,7 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 
 	switch (type) {
 	case SWITCH_ABC_TYPE_INIT:
+<<<<<<< HEAD
 		{
 			const char *var = switch_channel_get_variable(channel, "RECORD_USE_THREAD");
 
@@ -1183,6 +1173,15 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 				switch_threadattr_t *thd_attr = NULL;
 				switch_memory_pool_t *pool = switch_core_session_get_pool(session);
 				int sanity = 200;
+=======
+		if (switch_event_create(&event, SWITCH_EVENT_RECORD_START) == SWITCH_STATUS_SUCCESS) {
+			switch_event_add_header_string(event, SWITCH_STACK_BOTTOM, "Record-File-Path", rh->file);
+			switch_channel_event_set_data(channel, event);
+			switch_event_fire(&event);
+		}
+		rh->silence_time = switch_micro_time_now();
+		rh->silence_timeout_ms = rh->initial_timeout_ms;
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 
 				
 				switch_core_session_get_read_impl(session, &rh->read_impl);
@@ -1325,15 +1324,10 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 				while (switch_core_media_bug_read(bug, &frame, SWITCH_TRUE) == SWITCH_STATUS_SUCCESS) {
 					len = (switch_size_t) frame.datalen / 2;
 
-					if (len && switch_core_file_write(rh->fh, mask ? null_data : data, &len) != SWITCH_STATUS_SUCCESS) {
+					if (len && switch_core_file_write(rh->fh, mask ? null_data : data, &len) != SWITCH_STATUS_SUCCESS && rh->hangup_on_error) {
 						switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_ERROR, "Error writing %s\n", rh->file);
-						/* File write failed */
-						set_completion_cause(rh, "uri-failure");
-						if (rh->hangup_on_error) {
-							switch_channel_hangup(channel, SWITCH_CAUSE_DESTINATION_OUT_OF_ORDER);
-							switch_core_session_reset(session, SWITCH_TRUE, SWITCH_TRUE);
-						}
-						send_record_stop_event(channel, &read_impl, rh);
+						switch_channel_hangup(channel, SWITCH_CAUSE_DESTINATION_OUT_OF_ORDER);
+						switch_core_session_reset(session, SWITCH_TRUE, SWITCH_TRUE);
 						return SWITCH_FALSE;
 					}
 				}
@@ -1344,26 +1338,25 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 					switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG, "Discarding short file %s\n", rh->file);
 					switch_channel_set_variable(channel, "RECORD_DISCARDED", "true");
 					switch_file_remove(rh->file, switch_core_session_get_pool(session));
-					set_completion_cause(rh, "input-too-short");
 				}
 
-				if (switch_channel_down_nosig(channel)) {
-					/* We got hung up */
-					switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG, "Channel is hung up\n");
-					if (rh->speech_detected) {
-						/* Treat it as equivalent with final-silence */
-						set_completion_cause(rh, "success-silence");
-					} else {
-						/* Treat it as equivalent with inital-silence timeout */
-						set_completion_cause(rh, "no-input-timeout");
-					}
-				} else {
-					/* Set the completion_cause to maxtime reached, unless it's already set */
-					set_completion_cause(rh, "success-maxtime");
+				if (read_impl.actual_samples_per_second) {
+					switch_channel_set_variable_printf(channel, "record_seconds", "%d", rh->fh->samples_out / read_impl.actual_samples_per_second);
+					switch_channel_set_variable_printf(channel, "record_ms", "%d", rh->fh->samples_out / (read_impl.actual_samples_per_second / 1000));
 				}
+				switch_channel_set_variable_printf(channel, "record_samples", "%d", rh->fh->samples_out);
+				
 			}
 			
+<<<<<<< HEAD
 			send_record_stop_event(channel, &read_impl, rh);
+=======
+			if (switch_event_create(&event, SWITCH_EVENT_RECORD_STOP) == SWITCH_STATUS_SUCCESS) {
+				switch_channel_event_set_data(channel, event);
+				switch_event_add_header_string(event, SWITCH_STACK_BOTTOM, "Record-File-Path", rh->file);
+				switch_event_fire(&event);
+			}
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 			
 			switch_channel_execute_on(channel, SWITCH_RECORD_POST_PROCESS_EXEC_APP_VARIABLE);
 
@@ -1406,6 +1399,7 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 			frame.buflen = SWITCH_RECOMMENDED_BUFFER_SIZE;
 
 			for (;;) {
+<<<<<<< HEAD
 				status = switch_core_media_bug_read(bug, &frame, i++ == 0 ? SWITCH_FALSE : SWITCH_TRUE);
 
 				if (status != SWITCH_STATUS_SUCCESS || !frame.datalen) {
@@ -1425,6 +1419,18 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 							switch_channel_hangup(channel, SWITCH_CAUSE_DESTINATION_OUT_OF_ORDER);
 							switch_core_session_reset(session, SWITCH_TRUE, SWITCH_TRUE);
 						}
+=======
+				status = switch_core_media_bug_read(bug, &frame, SWITCH_FALSE);
+
+				if (status == SWITCH_STATUS_SUCCESS || status == SWITCH_STATUS_BREAK) {
+				
+					len = (switch_size_t) frame.datalen / 2;
+
+					if (len && switch_core_file_write(rh->fh, mask ? null_data : data, &len) != SWITCH_STATUS_SUCCESS && rh->hangup_on_error) {
+						switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_ERROR, "Error writing %s\n", rh->file);
+						switch_channel_hangup(channel, SWITCH_CAUSE_DESTINATION_OUT_OF_ORDER);
+						switch_core_session_reset(session, SWITCH_TRUE, SWITCH_TRUE);
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 						return SWITCH_FALSE;
 					}
 
@@ -1435,7 +1441,10 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 						if (is_silence_frame(&frame, rh->silence_threshold, &read_impl)) {
 							if (!rh->silence_time) {
 								/* start of silence */
+<<<<<<< HEAD
 								switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG, "Start of silence detected\n");
+=======
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 								rh->silence_time = switch_micro_time_now();
 							} else {
 								/* continuing silence */
@@ -1443,6 +1452,7 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 								if (rh->silence_timeout_ms > 0 && duration_ms >= rh->silence_timeout_ms) {
 									switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG, "Recording file %s timeout: %i >= %i\n", rh->file, duration_ms, rh->silence_timeout_ms);
 									switch_core_media_bug_set_flag(bug, SMBF_PRUNE);
+<<<<<<< HEAD
 									if (rh->speech_detected) {
 										/* Reached final silence timeout */
 										set_completion_cause(rh, "success-silence");
@@ -1470,6 +1480,21 @@ static switch_bool_t record_callback(switch_media_bug_t *bug, void *user_data, s
 							rh->speech_detected = SWITCH_TRUE;
 						}
 					}
+=======
+								}
+							}
+						} else { /* not silence */
+							if (rh->silence_time) {
+								/* end of silence */
+								rh->silence_time = 0;
+								/* switch from initial timeout to final timeout */
+								rh->silence_timeout_ms = rh->final_timeout_ms;
+							}
+						}
+					}
+				} else {
+					break;
+>>>>>>> FS-6891 FS-6713 #comment revert 1b612fecb6e8db11da9b15c5522b87e7b642423d
 				}
 			}
 		}
