@@ -104,7 +104,7 @@ static void json_cleanup(void)
 	switch_mutex_lock(json_GLOBALS.store_mutex);
  top:
 
-	for (hi = switch_core_hash_first_iter(json_GLOBALS.store_hash, hi); hi;) {
+	for (hi = switch_core_hash_first_iter(json_GLOBALS.store_hash, hi); hi; hi = switch_core_hash_next(&hi)) {
 		switch_core_hash_this(hi, &var, NULL, &val);
 		json = (cJSON *) val;
 		cJSON_Delete(json);
@@ -315,7 +315,7 @@ static void unsub_all_jsock(void)
  top:
 	head = NULL;
 
-	for (hi = switch_core_hash_first(globals.event_channel_hash); hi;) {
+	for (hi = switch_core_hash_first(globals.event_channel_hash); hi; hi = switch_core_hash_next(&hi)) {
 		switch_core_hash_this(hi, NULL, NULL, &val);
 		head = (jsock_sub_node_head_t *) val;
 		jsock_unsub_head(NULL, head);
@@ -1538,7 +1538,7 @@ new_req:
 		while(bytes < request.content_length) {
 			len = request.content_length - bytes;
 
-			if ((switch_ssize_t)(len = ws_raw_read(&jsock->ws, buffer + bytes, len, jsock->ws.block)) < 0) {
+			if ((len = ws_raw_read(&jsock->ws, buffer + bytes, len, jsock->ws.block)) < 0) {
 				switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Read error %" SWITCH_SIZE_T_FMT"\n", len);
 				goto done;
 			}
@@ -2141,8 +2141,6 @@ static switch_status_t verto_on_init(switch_core_session_t *session)
 	if (switch_channel_direction(tech_pvt->channel) == SWITCH_CALL_DIRECTION_OUTBOUND) {
 		if ((status = verto_connect(tech_pvt->session, "verto.invite")) != SWITCH_STATUS_SUCCESS) {
 			switch_channel_hangup(tech_pvt->channel, SWITCH_CAUSE_DESTINATION_OUT_OF_ORDER);
-		} else {
-			switch_channel_mark_ring_ready(tech_pvt->channel);
 		}
 	}
 
@@ -3976,8 +3974,6 @@ static void parse_ip(char *host, uint16_t *port, in_addr_t *addr, char *input)
 
 	strncpy(host, input, 255);
 
-	host[255] = 0;
-
 	if ((p = strchr(host, ':')) != NULL) {
 		*p++  = '\0';
 		*port = (uint16_t)atoi(p);
@@ -4985,7 +4981,7 @@ static switch_bool_t json_commit(cJSON *json, const char *name, switch_mutex_t *
 
 
 	sql = switch_mprintf("insert into json_store (name,data) values('%q','%q')", name, ascii);
-	switch_snprintfv(del_sql, sizeof(del_sql), "delete from json_store where name='%q'", name);
+	switch_snprintf(del_sql, sizeof(del_sql), "delete from json_store where name='%q'", name);
 
 	dbh = json_get_db_handle();
 
@@ -5040,7 +5036,7 @@ static switch_status_t json_hanguphook(switch_core_session_t *session)
 
 SWITCH_STANDARD_JSON_API(json_store_function)
 {
-	cJSON *JSON_STORE = NULL, *reply = NULL, *data = cJSON_GetObjectItem(json, "data");
+	cJSON *JSON_STORE, *reply = NULL, *data = cJSON_GetObjectItem(json, "data");
 	switch_status_t status = SWITCH_STATUS_FALSE;
 	const char *cmd_attr = cJSON_GetObjectCstr(data, "cmd");
 	const char *uuid = cJSON_GetObjectCstr(data, "uuid");
