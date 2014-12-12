@@ -1369,15 +1369,6 @@ SWITCH_DECLARE(switch_status_t) switch_core_session_write_frame(switch_core_sess
 
 			if (switch_test_flag(bp, SMBF_WRITE_STREAM)) {
 				switch_mutex_lock(bp->write_mutex);
-				if (diff > 1) {
-					switch_time_t tdiff = diff;
-					
-					while(tdiff > 1) {
-						switch_buffer_write(bp->raw_read_buffer, fill_data, len);
-						tdiff--;
-					}
-				}
-				
 				switch_buffer_write(bp->raw_write_buffer, write_frame->data, write_frame->datalen);
 				switch_mutex_unlock(bp->write_mutex);
 				
