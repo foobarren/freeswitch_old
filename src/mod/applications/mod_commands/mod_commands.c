@@ -2965,10 +2965,6 @@ SWITCH_STANDARD_API(uuid_drop_dtmf)
 	dup = strdup(cmd);
 	argc = switch_split(dup, ' ', argv);
 
-	if ( argc < 4 ) {
-		stream->write_function(stream, "-USAGE: %s\n", UUID_DROP_DTMF_SYNTAX);
-		goto end;
-	}
 
 	if (argv[0]) {
 		uuid = argv[0];
@@ -3813,18 +3809,7 @@ SWITCH_STANDARD_API(uuid_phone_event_function)
 		msg.from = __FILE__;
 
 		if ((lsession = switch_core_session_locate(argv[0]))) {
-			if (!strcasecmp(argv[1], "all")) {
-				msg.string_array_arg[0] = "both";
-			}
-
-        again:
 			status = switch_core_session_receive_message(lsession, &msg);
-
-			if (status == SWITCH_STATUS_SUCCESS && !strcasecmp(argv[1], "all") && !strcmp(msg.string_array_arg[0], "both")) {
-				msg.string_array_arg[0] = "vboth";
-				goto again;
-			}
-
 			switch_core_session_rwunlock(lsession);
 		}
 	}
@@ -3991,7 +3976,18 @@ SWITCH_STANDARD_API(uuid_debug_media_function)
 		msg.from = __FILE__;
 
 		if ((lsession = switch_core_session_locate(argv[0]))) {
+			if (!strcasecmp(argv[1], "all")) {
+				msg.string_array_arg[0] = "both";
+			}
+
+        again:
 			status = switch_core_session_receive_message(lsession, &msg);
+
+			if (status == SWITCH_STATUS_SUCCESS && !strcasecmp(argv[1], "all") && !strcmp(msg.string_array_arg[0], "both")) {
+				msg.string_array_arg[0] = "vboth";
+				goto again;
+			}
+
 			switch_core_session_rwunlock(lsession);
 		}
 	}
