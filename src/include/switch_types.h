@@ -1518,8 +1518,9 @@ typedef enum {
 } switch_channel_flag_t;
 
 typedef struct switch_vid_params_s {
-	int width;
-	int height;
+	uint32_t width;
+	uint32_t height;
+	uint32_t fps;
 } switch_vid_params_t;
 
 
