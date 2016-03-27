@@ -2601,7 +2601,8 @@ typedef enum {
 } switch_vid_spy_fmt_t;
 
 typedef enum {
-	SCFC_FLUSH_AUDIO
+	SCFC_FLUSH_AUDIO,
+	SCFC_PAUSE_READ
 } switch_file_command_t;
 
 SWITCH_END_EXTERN_C
