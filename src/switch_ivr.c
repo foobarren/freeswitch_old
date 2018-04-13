@@ -916,7 +916,7 @@ SWITCH_DECLARE(switch_status_t) switch_ivr_parse_all_events(switch_core_session_
 		if (switch_channel_media_up(channel)) {
 			switch_channel_clear_flag(channel, CF_BLOCK_BROADCAST_UNTIL_MEDIA);
 		} else {
-			return SWITCH_STATUS_SUCCESS;
+			goto done;
 		}
 	}
 
@@ -924,6 +924,7 @@ SWITCH_DECLARE(switch_status_t) switch_ivr_parse_all_events(switch_core_session_
 		x++;
 	}
 
+ done:
 	switch_core_session_stack_count(session, -1);
 	
 	return SWITCH_STATUS_SUCCESS;
