@@ -2064,6 +2064,13 @@
             console.log("stream started");
         };
 
+        RTCcallbacks.onRemoteStream = function(rtc, stream) {
+          if (typeof dialog.callbacks.onRemoteStream === 'function') {
+            dialog.callbacks.onRemoteStream(stream, dialog);
+          }
+          console.log("remote stream started");
+        };
+
         RTCcallbacks.onError = function(e) {
             if (dialog.callbacks.permissionCallback &&
                 typeof dialog.callbacks.permissionCallback.onDenied === 'function') {
