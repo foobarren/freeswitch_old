@@ -47,7 +47,7 @@ static void sofia_reg_new_handle(sofia_gateway_t *gateway_ptr, int attach)
 		nua_handle_bind(gateway_ptr->nh, NULL);
 		nua_handle_destroy(gateway_ptr->nh);
 		gateway_ptr->nh = NULL;
-		gateway_ptr->sofia_private = NULL;
+		sofia_private_free(gateway_ptr->sofia_private);
 	}
 
 	gateway_ptr->nh = nua_handle(gateway_ptr->profile->nua, NULL,
@@ -56,10 +56,8 @@ static void sofia_reg_new_handle(sofia_gateway_t *gateway_ptr, int attach)
 								 NUTAG_CALLSTATE_REF(ss_state), SIPTAG_FROM_STR(gateway_ptr->register_from), TAG_END());
 	if (attach) {
 		if (!gateway_ptr->sofia_private) {
-			gateway_ptr->sofia_private = su_alloc(gateway_ptr->nh->nh_home, sizeof(*gateway_ptr->sofia_private));
-			switch_assert(gateway_ptr->sofia_private);
+			switch_zmalloc(gateway_ptr->sofia_private, sizeof(*gateway_ptr->sofia_private));
 		}
-		memset(gateway_ptr->sofia_private, 0, sizeof(*gateway_ptr->sofia_private));
 
 		switch_set_string(gateway_ptr->sofia_private->gateway_name, gateway_ptr->name);
 		nua_handle_bind(gateway_ptr->nh, gateway_ptr->sofia_private);
@@ -83,15 +81,7 @@ static void sofia_reg_new_sub_handle(sofia_gateway_subscription_t *gw_sub_ptr)
 		nua_handle_bind(gw_sub_ptr->nh, NULL);
 		nua_handle_destroy(gw_sub_ptr->nh);
 		gw_sub_ptr->nh = NULL;
-<<<<<<< HEAD
-<<<<<<< HEAD
-		sofia_private_free(gateway_ptr->sofia_private);
-=======
 		sofia_private_free(gw_sub_ptr->sofia_private);
->>>>>>> FS-6128 FS-6200 --resolve allocating the sofia_private on the nua_handle seems to lead to memory corruption, changing it back to malloc as done in the version before the regression
-=======
-		gw_sub_ptr->sofia_private = NULL;
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
 	}
 		
 	gw_sub_ptr->nh = nua_handle(gateway_ptr->profile->nua, NULL,
@@ -99,36 +89,12 @@ static void sofia_reg_new_sub_handle(sofia_gateway_subscription_t *gw_sub_ptr)
 									 TAG_IF(user_via, SIPTAG_VIA_STR(user_via)),
 									 SIPTAG_TO_STR(gateway_ptr->register_to),
 									 NUTAG_CALLSTATE_REF(ss_state), SIPTAG_FROM_STR(gateway_ptr->register_from), TAG_END());
-<<<<<<< HEAD
-<<<<<<< HEAD
-	if (attach) {
-		if (!gateway_ptr->sofia_private) {
-			gateway_ptr->sofia_private = malloc(sizeof(*gateway_ptr->sofia_private));
-			switch_assert(gateway_ptr->sofia_private);
-		}
-		memset(gateway_ptr->sofia_private, 0, sizeof(*gateway_ptr->sofia_private));
-
-		gateway_ptr->sofia_private->gateway = gateway_ptr;
-		nua_handle_bind(gw_sub_ptr->nh, gateway_ptr->sofia_private);
-	}
-=======
 	if (!gw_sub_ptr->sofia_private) {
 		switch_zmalloc(gw_sub_ptr->sofia_private, sizeof(*gw_sub_ptr->sofia_private));
 	}
 	
 	switch_set_string(gw_sub_ptr->sofia_private->gateway_name, gateway_ptr->name);
 	nua_handle_bind(gw_sub_ptr->nh, gw_sub_ptr->sofia_private);
->>>>>>> FS-6128 FS-6200 --resolve allocating the sofia_private on the nua_handle seems to lead to memory corruption, changing it back to malloc as done in the version before the regression
-=======
-	if (!gw_sub_ptr->sofia_private) {
-		gw_sub_ptr->sofia_private = su_alloc(gw_sub_ptr->nh->nh_home, sizeof(*gw_sub_ptr->sofia_private));
-		switch_assert(gw_sub_ptr->sofia_private);
-	}
-	memset(gw_sub_ptr->sofia_private, 0, sizeof(*gw_sub_ptr->sofia_private));
-	
-	switch_set_string(gw_sub_ptr->sofia_private->gateway_name, gateway_ptr->name);
-	nua_handle_bind(gw_sub_ptr->nh, gw_sub_ptr->sofia_private);
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
 
 	switch_safe_free(register_host);
 	switch_safe_free(user_via);
@@ -138,16 +104,8 @@ static void sofia_reg_kill_sub(sofia_gateway_subscription_t *gw_sub_ptr)
 {	
 	sofia_gateway_t *gateway_ptr = gw_sub_ptr->gateway;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 	sofia_private_free(gw_sub_ptr->sofia_private);
 
->>>>>>> FS-6128 FS-6200 --resolve allocating the sofia_private on the nua_handle seems to lead to memory corruption, changing it back to malloc as done in the version before the regression
-=======
-	gw_sub_ptr->sofia_private = NULL;
-
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
 	if (gw_sub_ptr->nh) {
 		nua_handle_bind(gw_sub_ptr->nh, NULL);
 	}
@@ -180,14 +138,7 @@ static void sofia_reg_kill_reg(sofia_gateway_t *gateway_ptr)
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Destroying registration handle for %s\n", gateway_ptr->name);
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 	sofia_private_free(gateway_ptr->sofia_private);
->>>>>>> FS-6128 FS-6200 --resolve allocating the sofia_private on the nua_handle seems to lead to memory corruption, changing it back to malloc as done in the version before the regression
-=======
-	gateway_ptr->sofia_private = NULL;
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
 	nua_handle_bind(gateway_ptr->nh, NULL);
 	nua_handle_destroy(gateway_ptr->nh);
 	gateway_ptr->nh = NULL;
@@ -2373,33 +2324,6 @@ void sofia_reg_handle_sip_r_register(int status,
 								sofia_dispatch_event_t *de,
 									 tagi_t tags[])
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-	sofia_gateway_t *gateway = NULL;
-	
-	if (sofia_private && !zstr(sofia_private->gateway_name)) {
-		gateway = sofia_reg_find_gateway(sofia_private->gateway_name); 
-	}
-
-
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
-	if (status >= 500) {
-		if (sofia_private && gateway) {
-			nua_handle_bind(gateway->nh, NULL);
-			gateway->sofia_private = NULL;
-			nua_handle_destroy(gateway->nh);
-			gateway->nh = NULL;
-			
-		} else {
-			nua_handle_destroy(nh);
-		}
-	}
-
-<<<<<<< HEAD
-	if (sofia_private && sofia_private->gateway) {
-		reg_state_t ostate = sofia_private->gateway->state;
-=======
 	sofia_gateway_t *gateway = NULL;
 
 
@@ -2414,11 +2338,6 @@ void sofia_reg_handle_sip_r_register(int status,
 
 	if (sofia_private && gateway) {
 		reg_state_t ostate = gateway->state;
->>>>>>> FS-6128 FS-6200 --resolve allocating the sofia_private on the nua_handle seems to lead to memory corruption, changing it back to malloc as done in the version before the regression
-=======
-	if (sofia_private && gateway) {
-		reg_state_t ostate = gateway->state;
->>>>>>> FS-5987 pushing the patch now since no matter what its better than before
 		switch (status) {
 		case 200:
 			if (sip && sip->sip_contact) {

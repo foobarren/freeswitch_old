@@ -2211,7 +2211,6 @@ fi
 
 %if %{build_mod_rayo}
 %files event-rayo 
-%defattr(-, freeswitch, daemon)
 %{MODINSTDIR}/mod_rayo.so*
 %endif
 
@@ -2241,7 +2240,6 @@ fi
 
 %if %{build_mod_ssml}
 %files format-ssml
-%defattr(-, freeswitch, daemon)
 %{MODINSTDIR}/mod_ssml.so*
 %endif
 
@@ -2414,6 +2412,8 @@ fi
 - add mod_graylog2 and mod_mongo
 * Thu Sep 11 2014 - krice@freeswitch.org
 - add and fix mod_verto and mod_rtc
+* Fri Jul 20 2014 - krice@freeswitch.org
+- remove mod_cdr_pg_csv as its broken on centos
 * Mon Jun 02 2014 - krice@freeswitch.org
 - remove mod_spidermoney as its been deprecated
 * Fri Feb 21 2014 - crienzo@grasshopper.com
